@@ -80,6 +80,7 @@ class ExtMikFunctionss {
 	
 	function seqnext( &$parser, $seqname = "", $valpattern = 0, $fillchar = "" ) {
 		$parser->disableCache();
+		$seqname = str_replace(' ', '', $seqname);
 		$seqdir="sequences";
 		$pathname = dirname(__FILE__);
 		if(is_null($seqname)||$seqname===''){
