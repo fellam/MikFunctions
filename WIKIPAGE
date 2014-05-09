@@ -1,0 +1,59 @@
+{{Extension|templatemode =
+|name          = MikFunctions
+|status        = stable
+|type1         = tag
+|username      = Michele.Fella
+|author        = Michele Fella <michele.fella@gmail.com>
+|description   = extension defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
+|image         =
+|imagesize     =
+|version       = 0.1.0
+|update        = 2014-05-09
+|mediawiki     = 1.19+
+|license       = Apache License
+|download      = {{GithubDownload|fellam|MikFunctions}}
+|needs-updatephp = No
+|changelog     = 
+|parameters    =
+|tags          = &lt;MikFunctions>
+|rights        =
+|example       =
+|compatibility =
+|bugzilla      = MikFunctions
+}}
+
+The '''MikFunctions''' extension defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
+
+NOTE: This extension currently works only on *NIX servers
+
+== Install ==
+<source lang="php">
+require_once("$IP/extensions/MikFunctions/MikFunctions.php");
+</source>
+'''NOTE''': After installing the extension a directory named "'''seqences'''" should be created in the extension folder and write permissions shuold be granted for the wiki directory owner.  
+
+Example on linux: 
+
+mkdir ../extensions/MikFunctions/sequences;
+
+chown apache:apache ../extensions/MikFunctions/sequences;
+
+== Usage ==
+This module defines four functions: <tt>seqnext</tt>.  All of these functions operate in constant time.
+
+=== #seqnext: ===
+The #seqnext function returns the value of next integer int the defined sequence.  The syntax is:
+
+<nowiki>{{#</nowiki>seqnext:seqname|valpattern|fillchar}}. 
+
+ The first time the function is used a sequence with the specified '''seqname '''will be created returning 1. 
+
+ Every time the function is called an incremental value of '''seqname '''will be returned.
+
+ When '''valpattern''' and '''fillchar '''values are set: if the length of the incremental value of '''seqname '''is smaller than '''valpattern''' string length, the returned value will match '''valpattern''' length replacing with '''fillchar '''the missing values. 
+ (example <nowiki>{{#</nowiki>seqnext:test|9999|X}} will return XX45 when called the fourtyfifth times.
+
+==See also==
+* [[Extension:DynamicFunctions]]
+* [[Extension:VariablesExtension]]
+* [[Extension:GetParam]]
