@@ -1,11 +1,11 @@
 <?php
 
 /**
- * File holding the MikFunction class
+ * File holding the MikFunctions class
  *
  * @author Michele Fella <michele.fella@gmail.com>
  * @file
- * @ingroup MikFunction
+ * @ingroup MikFunctions
  */
 
 /*
@@ -36,26 +36,26 @@ if ( !defined( 'MEDIAWIKI' ) ) {
    die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
  
-$wgExtensionFunctions[] = 'wfMikFunctions';
+$wgExtensionFunctions[] = 'wfMikFunctionss';
 $wgExtensionCredits['parserhook'][] = array(
-	'name' => 'MikFunctions',
+	'name' => 'MikFunctionss',
 	'version' => '1.0',
-	'url' => 'https://www.mediawiki.org/wiki/Extension:MikFunctions',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:MikFunctionss',
 	'author' => 'Michele Fella',   
 	'description' => 'Defines an additional set of parser functions.'
 );
  
-$wgHooks['LanguageGetMagic'][] = 'wfMikFunctionsLanguageGetMagic';
+$wgHooks['LanguageGetMagic'][] = 'wfMikFunctionssLanguageGetMagic';
  
-function wfMikFunctions() {
-	global $wgParser, $wgExtMikFunctions;
+function wfMikFunctionss() {
+	global $wgParser, $wgExtMikFunctionss;
  
-	$wgExtMikFunctions = new ExtMikFunctions();
+	$wgExtMikFunctionss = new ExtMikFunctionss();
  
-	$wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctions, 'seqnext' ) );
+	$wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
 }
  
-function wfMikFunctionsLanguageGetMagic( &$magicWords, $langCode ) {
+function wfMikFunctionssLanguageGetMagic( &$magicWords, $langCode ) {
 	switch ( $langCode ) {
 	default:
 		$magicWords['seqnext']    = array( 0, 'seqnext' );
@@ -63,7 +63,7 @@ function wfMikFunctionsLanguageGetMagic( &$magicWords, $langCode ) {
 	return true;
 }
  
-class ExtMikFunctions {
+class ExtMikFunctionss {
  
 	function arg( &$parser, $name = '', $default = '' ) {
 		global $wgRequest;
@@ -83,39 +83,39 @@ class ExtMikFunctions {
 		$seqdir="sequences";
 		$pathname = dirname(__FILE__);
 		if(is_null($seqname)||$seqname===''){
-			throw new MikFunctionException('pathname is null or empty');
+			throw new MikFunctionsException('pathname is null or empty');
 		}
 // 		print "pathname: ".$pathname."</br>";
 // 		$cmd="echo -n \"$(ls -1 ".$pathname."|grep -e ".$seqdir.")\"";
 		$cmd="ls -1 ".$pathname."|grep -e '".$seqdir."'";
-		$seqdirexists = ExtMikFunctions::shellexec($cmd);
+		$seqdirexists = ExtMikFunctionss::shellexec($cmd);
 // 		print "seqdirexists - |".$seqdirexists."|".$seqdir."|</br>" ;
 		if( $seqdirexists !== $seqdir ){
-			throw new Exception('MikFunctions: Configuration error: sequence path does not exist! Contact administrator to fix this problem.');
+			throw new Exception('MikFunctionss: Configuration error: sequence path does not exist! Contact administrator to fix this problem.');
 		}
 		$pathname = $pathname.DIRECTORY_SEPARATOR.$seqdir;
 // 		print "pathname: ".$pathname."</br>";
 		$cmd=" if [ -d ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqdirisdir = (int) ExtMikFunctions::shellexec($cmd);
+		$seqdirisdir = (int) ExtMikFunctionss::shellexec($cmd);
 // 		print "seqdirisdir - ".$seqdirisdir."</br>" ;
 		if( $seqdirisdir != 1){
-			throw new Exception('MikFunctions: Configuration error: sequence dir is not a directory! Contact administrator to fix this problem.');
+			throw new Exception('MikFunctionss: Configuration error: sequence dir is not a directory! Contact administrator to fix this problem.');
 		}
 		$pathname = $pathname.DIRECTORY_SEPARATOR.$seqname;
 // 		print "pathname: ".$pathname."</br>";
 		$cmd=" if [ -f ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqexists = (int) ExtMikFunctions::shellexec($cmd);
+		$seqexists = (int) ExtMikFunctionss::shellexec($cmd);
 		if( $seqexists != 1){
 			$cmd="echo 0 > ".$pathname;
-			ExtMikFunctions::shellexec($cmd);
+			ExtMikFunctionss::shellexec($cmd);
 		}
 		$cmd=" if [ -w ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqexistsandiswriteble = (int) ExtMikFunctions::shellexec($cmd);
+		$seqexistsandiswriteble = (int) ExtMikFunctionss::shellexec($cmd);
 		if( $seqexistsandiswriteble < 1){
 			throw new Exception('sequence '.$seqname.' not a writable! Contact administrator to fix this problem.');
 		}
 		$cmd="cat ".$pathname;
-		$lastval = (int) ExtMikFunctions::shellexec($cmd);
+		$lastval = (int) ExtMikFunctionss::shellexec($cmd);
 // 		print "lastval: ".$lastval."</br>";
 		if(is_null($lastval)||$lastval===''||!is_numeric($lastval)){
 			throw new Exception('lastvalue for '.$seqname.' is null or empty or is not numeric ('.$lastval.')');
@@ -126,14 +126,14 @@ class ExtMikFunctions {
 			throw new Exception('internal error 1');
 		}
 		$cmd="echo ".$nextval." > ".$pathname;
-		ExtMikFunctions::shellexec($cmd);
+		ExtMikFunctionss::shellexec($cmd);
 		$cmd="cat ".$pathname;
-		ExtMikFunctions::shellexec($cmd);
-		$checkval = (int) ExtMikFunctions::shellexec($cmd);
+		ExtMikFunctionss::shellexec($cmd);
+		$checkval = (int) ExtMikFunctionss::shellexec($cmd);
 // 		print "checkval: ".$checkval."</br>";
 		if($nextval != $checkval){
 			$cmd="echo ".$lastval." > ".$pathname;
-			ExtMikFunctions::shellexec($cmd);
+			ExtMikFunctionss::shellexec($cmd);
 			throw new Exception('internal error 2');
 		}
 		if(!is_null($fillchar)&&$fillchar!=''){
