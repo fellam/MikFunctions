@@ -25,6 +25,9 @@
 		named "seqences" should be created in the extension folder and write 
 		permission shuold be granted for the wiki owner.  
 		example on linux: mkdir seqences; chown apache:apache seqences;
+		
+	{{#uml:umlcode}} Depends on plantuml extension.
+		process and returns the plant uml object AFTER processiong the raw wikitext (current limitation of plantuml)
 
  Author: Michele Fella [http://meta.wikimedia.org/wiki/User:Michele.Fella]
  Version 1.0 
@@ -51,14 +54,15 @@ function wfMikFunctionss() {
 	global $wgParser, $wgExtMikFunctionss;
  
 	$wgExtMikFunctionss = new ExtMikFunctionss();
- 
-	$wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
+ $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
+ $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctionss, 'uml' ) );
 }
  
 function wfMikFunctionssLanguageGetMagic( &$magicWords, $langCode ) {
 	switch ( $langCode ) {
 	default:
 		$magicWords['seqnext']    = array( 0, 'seqnext' );
+		$magicWords['uml']    = array( 0, 'uml' );
 	}
 	return true;
 }
@@ -148,5 +152,17 @@ class ExtMikFunctionss {
 		return $checkval;
 	}
  
+  function uml( &$parser, $umlcode = "" ) {
+		//$parser->disableCache();
+		global $plantumlImagetype;
+		if(is_null($umlcode)||$umlcode===''){
+			throw new MikFunctionsException('umlcode is null or empty');
+		}
+		if(!function_exists('mb_convert_encoding')) {
+			throw new MikFunctionsException('PlantUML extension not found!');
+		}
+		$result=renderUML($umlcode, array(), $parser);
+		return array( $result, 'noparse' => true, 'isHTML' => true );
+	}
 	
 }

@@ -2,9 +2,10 @@
 |name          = MikFunctions
 |status        = stable
 |type1         = tag
+|hook1         = LanguageGetMagic
 |username      = Michele.Fella
 |author        = Michele Fella <michele.fella@gmail.com>
-|description   = extension defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
+|description   = Defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
 |image         =
 |imagesize     =
 |version       = 0.1.0
@@ -19,24 +20,23 @@
 |rights        =
 |example       =
 |compatibility =
-|bugzilla      = MikFunctions
+|bugzilla      = 
 }}
 
 The '''MikFunctions''' extension defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
 
-NOTE: This extension currently works only on *NIX servers
+{{Note}} This extension currently works only on *NIX servers
 
 == Install ==
-<source lang="php">
-require_once("$IP/extensions/MikFunctions/MikFunctions.php");
-</source>
-'''NOTE''': After installing the extension a directory named "'''seqences'''" should be created in the extension folder and write permissions shuold be granted for the wiki directory owner.  
-
-Example on linux: 
-
-mkdir ../extensions/MikFunctions/sequences;
-
-chown apache:apache ../extensions/MikFunctions/sequences;
+{{ExtensionInstall
+|download-link=[https://github.com/fellam/MikFunctions/archive/master.zip Download]]
+|custom-steps=* Create a directory named "'''seqences'''" in the extension's directory, e.g.<syntaxhighlight lang="bash">mkdir ../extensions/MikFunctions/sequences;</syntaxhighlight>
+* Grant write permissions to this folder, e.g.
+<syntaxhighlight lang="bash">
+chown apache:apache ../extensions/MikFunctions/sequences; // CentOS?
+chown www-data:www-data ../extensions/MikFunctions/sequences; // Debian
+</syntaxhighlight>
+}}
 
 == Usage ==
 This module defines four functions: <tt>seqnext</tt>.  All of these functions operate in constant time.
@@ -44,16 +44,32 @@ This module defines four functions: <tt>seqnext</tt>.  All of these functions op
 === #seqnext: ===
 The #seqnext function returns the value of next integer int the defined sequence.  The syntax is:
 
-<nowiki>{{#</nowiki>seqnext:seqname|valpattern|fillchar}}. 
+<code><nowiki>{{#</nowiki>seqnext:seqname|valpattern|fillchar}}</code> 
 
- The first time the function is used a sequence with the specified '''seqname '''will be created returning 1. 
+The first time the function is used a sequence with the specified '''seqname '''will be created returning 1. 
 
- Every time the function is called an incremental value of '''seqname '''will be returned.
+Every time the function is called an incremental value of '''seqname '''will be returned.
 
- When '''valpattern''' and '''fillchar '''values are set: if the length of the incremental value of '''seqname '''is smaller than '''valpattern''' string length, the returned value will match '''valpattern''' length replacing with '''fillchar '''the missing values. 
- (example <nowiki>{{#</nowiki>seqnext:test|9999|X}} will return XX45 when called the fourtyfifth times.
+When '''valpattern''' and '''fillchar''' values are set: if the length of the incremental value of '''seqname '''is smaller than '''valpattern''' string length, the returned value will match '''valpattern''' length replacing with '''fillchar''' the missing values. 
+
+;Example
+<code><nowiki>{{#</nowiki>seqnext:test|9999|X}}</code> will return XX45 when called the fourtyfifth time.
+
+=== #uml: ===
+The #uml function depends on plantuml extension.
+It process and returns the plant uml object '''AFTER''' processiong the raw wikitext (current limitation of plantuml)
+
+<code><nowiki>{{#</nowiki>uml:plantumlcode}}</code> 
+
+If you are not famliar with uml and wiki extension you might want to check [http://www.plantuml.com/ plantuml] and [[Extension:PlantUML|PlantUML]] pages.
+
+;Example
+<code><nowiki><uml></nowiki>actor Mik #99FF99<nowiki></uml></nowiki></code> will return the uml object after being processed by the PlantUML extension.
+
+But this wont work if you use the uml tag in a template and you want to build your uml code with triple braces vaiables, insthead, in your template you can use the <code><nowiki>{{#</nowiki>uml:actor Mik #99FF99 }}</code> to obtain the same result. 
 
 ==See also==
 * [[Extension:DynamicFunctions]]
 * [[Extension:VariablesExtension]]
 * [[Extension:GetParam]]
+* [[Extension:PlantUML|PlantUML]]
