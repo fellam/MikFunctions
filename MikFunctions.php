@@ -26,8 +26,10 @@
 		permission shuold be granted for the wiki owner.  
 		example on linux: mkdir seqences; chown apache:apache seqences;
 		
-	{{#uml:umlcode}} Depends on plantuml extension.
+{{#uml:umlcode}} Depends on plantuml extension.
 		process and returns the plant uml object AFTER processiong the raw wikitext (current limitation of plantuml)
+		
+{{#parsenl:text}} process and returns the input text duplicatinc new lines and return carriages (usefull to show user input text exaclty as inserted)  
 
  Author: Michele Fella [http://meta.wikimedia.org/wiki/User:Michele.Fella]
  Version 1.0 
@@ -54,8 +56,10 @@ function wfMikFunctionss() {
 	global $wgParser, $wgExtMikFunctionss;
  
 	$wgExtMikFunctionss = new ExtMikFunctionss();
- $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
- $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctionss, 'uml' ) );
+  $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
+  $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctionss, 'uml' ) );
+  $wgParser->setFunctionHook( 'parsenl', array( &$wgExtMikFunctionss, 'parsenl' ) );
+  $wgParser->setFunctionHook( 'mikecho', array( &$wgExtMikFunctionss, 'mikecho' ) );
 }
  
 function wfMikFunctionssLanguageGetMagic( &$magicWords, $langCode ) {
@@ -63,6 +67,8 @@ function wfMikFunctionssLanguageGetMagic( &$magicWords, $langCode ) {
 	default:
 		$magicWords['seqnext']    = array( 0, 'seqnext' );
 		$magicWords['uml']    = array( 0, 'uml' );
+		$magicWords['mikecho']    = array( 0, 'mikecho' );
+		$magicWords['parsenl']    = array( 0, 'parsenl' );
 	}
 	return true;
 }
@@ -152,17 +158,51 @@ class ExtMikFunctionss {
 		return $checkval;
 	}
  
-  function uml( &$parser, $umlcode = "" ) {
+  function uml( &$parser, $umlcode = "", $attrs = "", $imagetype = 'svg'  ) {
 		//$parser->disableCache();
 		global $plantumlImagetype;
+		$replace = "<br>";
+		$umlcode = str_replace($replace,"\r\n",$umlcode);
 		if(is_null($umlcode)||$umlcode===''){
 			throw new MikFunctionsException('umlcode is null or empty');
 		}
 		if(!function_exists('mb_convert_encoding')) {
 			throw new MikFunctionsException('PlantUML extension not found!');
 		}
+		$result = "";
+		if(!is_null($imagetype)) {
+				$prev_plantumlImagetype=$plantumlImagetype;
+				switch ($imagetype) {
+					case 'svg':
+					case 'png': 
+    				$plantumlImagetype = $imagetype;
+    			break;
+				}
+		}
 		$result=renderUML($umlcode, array(), $parser);
+		$plantumlImagetype=$prev_plantumlImagetype;
+		foreach (explode(',',$attrs) as $key => $value) {
+			$a=explode('=',$value);
+			#print $a[0]."=".$a[1]."<br/>";
+			$result = preg_replace('/'.$a[0].':\d+px/i',''.$a[0].':'.$a[1],$result);
+			#print "$result <br/>";
+		}	
+		#exit;
 		return array( $result, 'noparse' => true, 'isHTML' => true );
 	}
 	
+	function mikecho( &$parser, $text = "" ) {
+		if(is_null($text)||$text===''){
+			throw new MikFunctionsException('input text is null or empty');
+		}
+		return array( $text, 'noparse' => true, 'isHTML' => true );
+	}
+	
+	function parsenl( &$parser, $text = "" ) {
+		//print("OK <br>");
+		//var_dump($text);
+		//print("<br>");
+		$text = strtr($text, array("\n" => "\n\n", "\r" => "\r\n"));
+		return array( $text, 'noparse' => true, 'isHTML' => true  );
+	}
 }
