@@ -1,4 +1,4 @@
-{{Extension|templatemode =
+{{TNT|Extension|templatemode =
 |name          = MikFunctions
 |status        = stable
 |type1         = tag
@@ -8,11 +8,11 @@
 |description   = Defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
 |image         =
 |imagesize     =
-|version       = 0.1.0
-|update        = 2014-05-09
-|mediawiki     = 1.19+
+|version       = 0.1.4
+|update        = 2016-04-26
+|mediawiki     = 1.26+
 |license       = Apache License
-|download      = {{GithubDownload|fellam|MikFunctions}}
+|download      = {{TNT|GithubDownload|fellam|MikFunctions}}
 |needs-updatephp = No
 |changelog     = 
 |parameters    =
@@ -28,8 +28,8 @@ The '''MikFunctions''' extension defines an additional set of [[m:Help:Parser fu
 {{Note}} This extension currently works only on *NIX servers
 
 == Install ==
-{{ExtensionInstall
-|download-link=[https://github.com/fellam/MikFunctions/archive/master.zip Download]]
+{{TNT|ExtensionInstall
+|download-link=[https://github.com/fellam/MikFunctions/archive/master.zip Download]
 |custom-steps=* Create a directory named "'''seqences'''" in the extension's directory, e.g.<syntaxhighlight lang="bash">mkdir ../extensions/MikFunctions/sequences;</syntaxhighlight>
 * Grant write permissions to this folder, e.g.
 <syntaxhighlight lang="bash">
@@ -67,6 +67,38 @@ If you are not famliar with uml and wiki extension you might want to check [http
 <code><nowiki><uml></nowiki>actor Mik #99FF99<nowiki></uml></nowiki></code> will return the uml object after being processed by the PlantUML extension.
 
 But this wont work if you use the uml tag in a template and you want to build your uml code with triple braces vaiables, insthead, in your template you can use the <code><nowiki>{{#</nowiki>uml:actor Mik #99FF99 }}</code> to obtain the same result. 
+
+=== #parsenl: ===
+Processes and returns the input text duplicating new lines and return carriages (usefull to show user input text exaclty as inserted)
+
+;Example
+<code><nowiki>{{#</nowiki>parsenl:text to parse}}</code>
+
+=== #mikecho: ===
+echo raw text
+
+;Example
+<code><nowiki>{{#</nowiki>mikecho:text to echo}}</code>
+
+=== #ckusergroup: ===
+checks if user belongs to a group (usage example: you can use it with ifexpr within an article or a template in order decide wether or not to perform actions or show content)   
+
+;Example
+<code><nowiki>{{#</nowiki>ifexpr:<nowiki>{{#</nowiki>ckusergroup:administrators}}| ..do something |..else }}</code>
+
+=== #makebutton: ===
+makes html button
+
+;Example
+<code><nowiki>{{#</nowiki>makebutton:<nowiki>{{</nowiki>fullurl:<nowiki>{{</nowiki>FULLPAGENAME}}|action=delete}}|Delete this page|disabled}} --> Buddon disabled </code>
+
+<code><nowiki>{{#</nowiki>makebutton:<nowiki>{{</nowiki>fullurl:<nowiki>{{</nowiki>FULLPAGENAME}}|action=delete}}|Delete this page}} --> Buddon enabled </code>
+
+=== #mikreplace: ===
+replace raw text
+
+;Example
+<code><nowiki>{{#</nowiki>mikreplace:text|search|replacement}}</code>
 
 ==See also==
 * [[Extension:DynamicFunctions]]

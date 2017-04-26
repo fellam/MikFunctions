@@ -31,6 +31,15 @@
 		
 {{#parsenl:text}} process and returns the input text duplicatinc new lines and return carriages (usefull to show user input text exaclty as inserted)  
 
+{{#mikecho:text}} echo raw text
+
+{{#ckusergroup:GROUP}} checks if user belongs to a group
+
+{{#makebutton:text}} makes html button
+
+{{#mikreplace:text|search|replacement}} replace raw text
+
+
  Author: Michele Fella [http://meta.wikimedia.org/wiki/User:Michele.Fella]
  Version 1.0 
  
@@ -41,39 +50,45 @@ if ( !defined( 'MEDIAWIKI' ) ) {
    die( 'This file is a MediaWiki extension, it is not a valid entry point' );
 }
  
-$wgExtensionFunctions[] = 'wfMikFunctionss';
+$wgExtensionFunctions[] = 'wfMikFunctions';
 $wgExtensionCredits['parserhook'][] = array(
-	'name' => 'MikFunctionss',
-	'version' => '1.0',
-	'url' => 'https://www.mediawiki.org/wiki/Extension:MikFunctionss',
+	'name' => 'MikFunctions',
+	'version' => '1.1',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:MikFunctions',
 	'author' => 'Michele Fella',   
 	'description' => 'Defines an additional set of parser functions.'
 );
  
-$wgHooks['LanguageGetMagic'][] = 'wfMikFunctionssLanguageGetMagic';
+$wgHooks['LanguageGetMagic'][] = 'wfMikFunctionsLanguageGetMagic';
  
-function wfMikFunctionss() {
-	global $wgParser, $wgExtMikFunctionss;
+function wfMikFunctions() {
+	global $wgParser, $wgExtMikFunctions;
  
-	$wgExtMikFunctionss = new ExtMikFunctionss();
-  $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctionss, 'seqnext' ) );
-  $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctionss, 'uml' ) );
-  $wgParser->setFunctionHook( 'parsenl', array( &$wgExtMikFunctionss, 'parsenl' ) );
-  $wgParser->setFunctionHook( 'mikecho', array( &$wgExtMikFunctionss, 'mikecho' ) );
+	$wgExtMikFunctions = new ExtMikFunctions();
+  $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctions, 'seqnext' ) );
+  $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctions, 'uml' ) );
+  $wgParser->setFunctionHook( 'parsenl', array( &$wgExtMikFunctions, 'parsenl' ) );
+  $wgParser->setFunctionHook( 'mikecho', array( &$wgExtMikFunctions, 'mikecho' ) );
+  $wgParser->setFunctionHook( 'ckusergroup', array( &$wgExtMikFunctions, 'ckusergroup' ) );
+  $wgParser->setFunctionHook( 'makebutton', array( &$wgExtMikFunctions, 'makebutton' ) );
+  $wgParser->setFunctionHook( 'mikreplace', array( &$wgExtMikFunctions, 'mikreplace' ) );
 }
  
-function wfMikFunctionssLanguageGetMagic( &$magicWords, $langCode ) {
+function wfMikFunctionsLanguageGetMagic( &$magicWords, $langCode ) {
 	switch ( $langCode ) {
 	default:
 		$magicWords['seqnext']    = array( 0, 'seqnext' );
 		$magicWords['uml']    = array( 0, 'uml' );
 		$magicWords['mikecho']    = array( 0, 'mikecho' );
 		$magicWords['parsenl']    = array( 0, 'parsenl' );
+		$magicWords['ckusergroup']    = array( 0, 'ckusergroup' );
+		$magicWords['makebutton']    = array( 0, 'makebutton' );
+		$magicWords['mikreplace']    = array( 0, 'mikreplace' );
 	}
 	return true;
 }
  
-class ExtMikFunctionss {
+class ExtMikFunctions {
  
 	function arg( &$parser, $name = '', $default = '' ) {
 		global $wgRequest;
@@ -99,34 +114,34 @@ class ExtMikFunctionss {
 // 		print "pathname: ".$pathname."</br>";
 // 		$cmd="echo -n \"$(ls -1 ".$pathname."|grep -e ".$seqdir.")\"";
 		$cmd="ls -1 ".$pathname."|grep -e '".$seqdir."'";
-		$seqdirexists = ExtMikFunctionss::shellexec($cmd);
+		$seqdirexists = ExtMikFunctions::shellexec($cmd);
 // 		print "seqdirexists - |".$seqdirexists."|".$seqdir."|</br>" ;
 		if( $seqdirexists !== $seqdir ){
-			throw new Exception('MikFunctionss: Configuration error: sequence path does not exist! Contact administrator to fix this problem.');
+			throw new Exception('MikFunctions: Configuration error: sequence path does not exist! Contact administrator to fix this problem.');
 		}
 		$pathname = $pathname.DIRECTORY_SEPARATOR.$seqdir;
 // 		print "pathname: ".$pathname."</br>";
 		$cmd=" if [ -d ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqdirisdir = (int) ExtMikFunctionss::shellexec($cmd);
+		$seqdirisdir = (int) ExtMikFunctions::shellexec($cmd);
 // 		print "seqdirisdir - ".$seqdirisdir."</br>" ;
 		if( $seqdirisdir != 1){
-			throw new Exception('MikFunctionss: Configuration error: sequence dir is not a directory! Contact administrator to fix this problem.');
+			throw new Exception('MikFunctions: Configuration error: sequence dir is not a directory! Contact administrator to fix this problem.');
 		}
 		$pathname = $pathname.DIRECTORY_SEPARATOR.$seqname;
 // 		print "pathname: ".$pathname."</br>";
 		$cmd=" if [ -f ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqexists = (int) ExtMikFunctionss::shellexec($cmd);
+		$seqexists = (int) ExtMikFunctions::shellexec($cmd);
 		if( $seqexists != 1){
 			$cmd="echo 0 > ".$pathname;
-			ExtMikFunctionss::shellexec($cmd);
+			ExtMikFunctions::shellexec($cmd);
 		}
 		$cmd=" if [ -w ".$pathname." ]; then echo 1; else echo 0; fi";
-		$seqexistsandiswriteble = (int) ExtMikFunctionss::shellexec($cmd);
+		$seqexistsandiswriteble = (int) ExtMikFunctions::shellexec($cmd);
 		if( $seqexistsandiswriteble < 1){
-			throw new Exception('sequence '.$seqname.' not a writable! Contact administrator to fix this problem.');
+			throw new Exception('sequence '.$seqname.' not writable! Contact administrator to fix this problem.');
 		}
 		$cmd="cat ".$pathname;
-		$lastval = (int) ExtMikFunctionss::shellexec($cmd);
+		$lastval = (int) ExtMikFunctions::shellexec($cmd);
 // 		print "lastval: ".$lastval."</br>";
 		if(is_null($lastval)||$lastval===''||!is_numeric($lastval)){
 			throw new Exception('lastvalue for '.$seqname.' is null or empty or is not numeric ('.$lastval.')');
@@ -137,14 +152,14 @@ class ExtMikFunctionss {
 			throw new Exception('internal error 1');
 		}
 		$cmd="echo ".$nextval." > ".$pathname;
-		ExtMikFunctionss::shellexec($cmd);
+		ExtMikFunctions::shellexec($cmd);
 		$cmd="cat ".$pathname;
-		ExtMikFunctionss::shellexec($cmd);
-		$checkval = (int) ExtMikFunctionss::shellexec($cmd);
+		ExtMikFunctions::shellexec($cmd);
+		$checkval = (int) ExtMikFunctions::shellexec($cmd);
 // 		print "checkval: ".$checkval."</br>";
 		if($nextval != $checkval){
 			$cmd="echo ".$lastval." > ".$pathname;
-			ExtMikFunctionss::shellexec($cmd);
+			ExtMikFunctions::shellexec($cmd);
 			throw new Exception('internal error 2');
 		}
 		if(!is_null($fillchar)&&$fillchar!=''){
@@ -183,8 +198,10 @@ class ExtMikFunctionss {
 		$plantumlImagetype=$prev_plantumlImagetype;
 		foreach (explode(',',$attrs) as $key => $value) {
 			$a=explode('=',$value);
-			#print $a[0]."=".$a[1]."<br/>";
-			$result = preg_replace('/'.$a[0].':\d+px/i',''.$a[0].':'.$a[1],$result);
+			//print $a[0]."=".$a[1]."<br/>";
+			if(count($a)>1){
+				$result = preg_replace('/'.$a[0].':\d+px/i',''.$a[0].':'.$a[1],$result);
+			}
 			#print "$result <br/>";
 		}	
 		#exit;
@@ -205,4 +222,30 @@ class ExtMikFunctionss {
 		$text = strtr($text, array("\n" => "\n\n", "\r" => "\r\n"));
 		return array( $text, 'noparse' => true, 'isHTML' => true  );
 	}
+
+	function ckusergroup( &$parser, $group = "" ) {
+		$res=0;
+		foreach($GLOBALS['wgUser']->getGroups() as $key => $value)
+		{
+			if($group == $value){
+				$res=1;
+				break;
+			}
+		}
+                return array( $res, 'noparse' => false, 'isHTML' => false  );
+        }
+		
+	function makebutton( &$parser, $url= "", $label = "", $options = "" ) {
+		$res="<html><button type='button' onclick=\"location.href='".$url."'\" ".$options.">".$label."</button></html>";
+                return array( $res, 'noparse' => false, 'isHTML' => false  );
+        }
+
+	function mikreplace( &$parser, $text = "", $search = "", $newval = "" ) {
+		if(is_null($text)||$text===''){
+                        throw new MikFunctionsException('input text is null or empty');
+                }
+		return str_replace($search, $newval, $text);
+	}
+	
+
 }
