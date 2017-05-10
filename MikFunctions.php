@@ -26,8 +26,7 @@
 		permission shuold be granted for the wiki owner.  
 		example on linux: mkdir seqences; chown apache:apache seqences;
 		
-{{#uml:umlcode}} Depends on plantuml extension.
-		process and returns the plant uml object AFTER processiong the raw wikitext (current limitation of plantuml)
+DEPRECATED: {{#uml:umlcode}} replaced with Extension:MikUML extension.
 		
 {{#parsenl:text}} process and returns the input text duplicatinc new lines and return carriages (usefull to show user input text exaclty as inserted)  
 
@@ -66,7 +65,6 @@ function wfMikFunctions() {
  
 	$wgExtMikFunctions = new ExtMikFunctions();
   $wgParser->setFunctionHook( 'seqnext', array( &$wgExtMikFunctions, 'seqnext' ) );
-  $wgParser->setFunctionHook( 'uml', array( &$wgExtMikFunctions, 'uml' ) );
   $wgParser->setFunctionHook( 'parsenl', array( &$wgExtMikFunctions, 'parsenl' ) );
   $wgParser->setFunctionHook( 'mikecho', array( &$wgExtMikFunctions, 'mikecho' ) );
   $wgParser->setFunctionHook( 'ckusergroup', array( &$wgExtMikFunctions, 'ckusergroup' ) );
@@ -78,7 +76,6 @@ function wfMikFunctionsLanguageGetMagic( &$magicWords, $langCode ) {
 	switch ( $langCode ) {
 	default:
 		$magicWords['seqnext']    = array( 0, 'seqnext' );
-		$magicWords['uml']    = array( 0, 'uml' );
 		$magicWords['mikecho']    = array( 0, 'mikecho' );
 		$magicWords['parsenl']    = array( 0, 'parsenl' );
 		$magicWords['ckusergroup']    = array( 0, 'ckusergroup' );
@@ -171,41 +168,6 @@ class ExtMikFunctions {
 			}
 		}
 		return $checkval;
-	}
- 
-  function uml( &$parser, $umlcode = "", $attrs = "", $imagetype = 'svg'  ) {
-		//$parser->disableCache();
-		global $plantumlImagetype;
-		$replace = "<br>";
-		$umlcode = str_replace($replace,"\r\n",$umlcode);
-		if(is_null($umlcode)||$umlcode===''){
-			throw new MikFunctionsException('umlcode is null or empty');
-		}
-		if(!function_exists('mb_convert_encoding')) {
-			throw new MikFunctionsException('PlantUML extension not found!');
-		}
-		$result = "";
-		if(!is_null($imagetype)) {
-				$prev_plantumlImagetype=$plantumlImagetype;
-				switch ($imagetype) {
-					case 'svg':
-					case 'png': 
-    				$plantumlImagetype = $imagetype;
-    			break;
-				}
-		}
-		$result=renderUML($umlcode, array(), $parser);
-		$plantumlImagetype=$prev_plantumlImagetype;
-		foreach (explode(',',$attrs) as $key => $value) {
-			$a=explode('=',$value);
-			//print $a[0]."=".$a[1]."<br/>";
-			if(count($a)>1){
-				$result = preg_replace('/'.$a[0].':\d+px/i',''.$a[0].':'.$a[1],$result);
-			}
-			#print "$result <br/>";
-		}	
-		#exit;
-		return array( $result, 'noparse' => true, 'isHTML' => true );
 	}
 	
 	function mikecho( &$parser, $text = "" ) {

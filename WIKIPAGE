@@ -9,7 +9,7 @@
 |image         =
 |imagesize     =
 |version       = 0.1.4
-|update        = 2016-04-26
+|update        = 2016-05-10
 |mediawiki     = 1.26+
 |license       = Apache License
 |download      = {{TNT|GithubDownload|fellam|MikFunctions}}
@@ -56,17 +56,9 @@ When '''valpattern''' and '''fillchar''' values are set: if the length of the in
 <code><nowiki>{{#</nowiki>seqnext:test|9999|X}}</code> will return XX45 when called the fourtyfifth time.
 
 === #uml: ===
-The #uml function depends on plantuml extension.
-It process and returns the plant uml object '''AFTER''' processiong the raw wikitext (current limitation of plantuml)
+The #uml function has been removed from this extension as no more compatible with plantuml version 0.6.
 
-<code><nowiki>{{#</nowiki>uml:plantumlcode}}</code> 
-
-If you are not famliar with uml and wiki extension you might want to check [http://www.plantuml.com/ plantuml] and [[Extension:PlantUML|PlantUML]] pages.
-
-;Example
-<code><nowiki><uml></nowiki>actor Mik #99FF99<nowiki></uml></nowiki></code> will return the uml object after being processed by the PlantUML extension.
-
-But this wont work if you use the uml tag in a template and you want to build your uml code with triple braces vaiables, insthead, in your template you can use the <code><nowiki>{{#</nowiki>uml:actor Mik #99FF99 }}</code> to obtain the same result. 
+A new extension [[Extension:MikUML|MikUML]] has been created to replace this funcion and assure compatibility with PlantUML 0.6.  
 
 === #parsenl: ===
 Processes and returns the input text duplicating new lines and return carriages (usefull to show user input text exaclty as inserted)
