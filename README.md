@@ -6,7 +6,7 @@ NOTE: This extension currently works only on *NIX servers
 
 For details click [here](https://www.mediawiki.org/Extension:MikFunctions) 
 
-	Please help me improving this project making a donation [here](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UBX4YGMGGWHEN)
+Please help me improving this project making a donation [here](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UBX4YGMGGWHEN)
 
 # Dependencies
 
