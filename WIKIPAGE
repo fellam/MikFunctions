@@ -8,7 +8,7 @@
 |description   = Defines an additional set of [[m:Help:Parser function|parser function]]s that provide dynamic functionality and cannot be cached.
 |image         =
 |imagesize     =
-|version       = 0.1.4
+|version       = 0.1.5
 |update        = 2016-05-10
 |mediawiki     = 1.26+
 |license       = Apache License
@@ -93,6 +93,7 @@ replace raw text
 <code><nowiki>{{#</nowiki>mikreplace:text|search|replacement}}</code>
 
 ==See also==
+* [[Extension:MikUML|MikUML]]
 * [[Extension:DynamicFunctions]]
 * [[Extension:VariablesExtension]]
 * [[Extension:GetParam]]
